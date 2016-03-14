@@ -1,0 +1,23 @@
+{
+  "name": "umeng-push",
+  "version": "0.1.0",
+  "description": "umeng push sdk for nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "keywords": [
+    "umeng",
+    "notification",
+    "push"
+  ],
+  "author": "johnsmith1st <johnsmith1st@live.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.3.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:JohnSmithDr/node-umeng-push.git"
+  }
+}
