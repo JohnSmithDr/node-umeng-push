@@ -1,3 +1,4 @@
 'use strict';
 
-module.exports = require('./src/UmengPush');
+module.exports.UmengPush = require('./src/UmengPush');
+module.exports.UmengPushArgs = require('./src/UmengPushArgs');
