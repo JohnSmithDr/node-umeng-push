@@ -19,5 +19,8 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:JohnSmithDr/node-umeng-push.git"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0"
   }
 }

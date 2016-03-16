@@ -1,43 +1,40 @@
 'use strict';
 
 function getOrSetTypeProperty(obj, prop, value, type) {
-  if (value === null) {
-    obj[prop] = null;
+  if (value === undefined) {
+    return obj[prop];
+  }
+  else if ((value === null) || (value instanceof type)) {
+    obj[prop] = value;
     return obj;
   }
-  if (value) {
-    if (value instanceof type) {
-      obj[prop] = value;
-      return obj;
-    }
-    else {
-      throw Error(`require value to be instance of ${type.name}`);
-    }
-  }
-  return obj;
+  throw Error(`require value to be instance of ${type.name}`);
 }
 
 function getOrSetValueProperty(obj, prop, value, type) {
-  if (value === null) {
-    obj[prop] = null;
+  if (value === undefined) {
+    return obj[prop];
+  }
+  else if ((value === null) || (typeof value === type)) {
+    obj[prop] = value;
     return obj;
   }
-  if (value) {
-    if (typeof value === type) {
-      obj[prop] = value;
-      return obj;
-    }
-    else {
-      throw Error(`require value to be ${type} type`);
-    }
-  }
-  return obj;
+  throw Error(`require value to be ${type}`);
 }
 
 function getOrSetArrayProperty(obj, prop, value, type) {
-  if (typeof value === type) obj[prop] = [value];
-  else if (Array.isArray(value)) obj[prop] = [].concat(value);
-  else return obj;
+  if (value === undefined) {
+    return obj[prop];
+  }
+  else if (typeof value === type) {
+    obj[prop] = [value];
+    return obj;
+  }
+  else if (Array.isArray(value)) {
+    obj[prop] = [].concat(value);
+    return obj;
+  }
+  throw Error(`require value to be ${type} or array`);
 }
 
 /**
@@ -159,7 +156,7 @@ class UmengPushArgs {
     if (this._alias && this._alias.length) r.alias = this.alias().join(',');
     if (typeof this._aliasType === 'string') r.alias_type = this.aliasType();
     if (typeof this._fileId === 'string') r.file_id = this.fileId();
-    if (typeof this._filter === 'object') r.filter = this.filter();
+    if (this._filter && (typeof this._filter === 'object')) r.filter = this.filter();
     if (typeof this._productionMode === 'boolean') r.production_mode = this.productionMode() + '';
     if (typeof this._description === 'string') r.description = this.description();
     if (typeof this._thirdPartyId === 'string') r.thirdparty_id = this.thirdPartyId();
@@ -172,7 +169,7 @@ class UmengPushArgs {
    * Build android push args.
    * @returns {UmengPushAndroidArgs}
    */
-  static buildAndroid() {
+  static android() {
     return new UmengPushAndroidArgs();
   }
 
@@ -188,7 +185,7 @@ class UmengPushArgs {
    * Build android payload body.
    * @returns {UmengAndroidPayloadBody}
    */
-  static androidPlayloadBody() {
+  static androidPayloadBody() {
     return new UmengAndroidPayloadBody();
   }
 
@@ -196,7 +193,7 @@ class UmengPushArgs {
    * Build ios push args
    * @returns {UmengPushIOSArgs}
    */
-  static buildIOS() {
+  static ios() {
     return new UmengPushIOSArgs();
   }
 
@@ -204,7 +201,7 @@ class UmengPushArgs {
    * Build ios payload.
    * @returns {UmengIOSPayload}
    */
-  static iOSPayload() {
+  static iosPayload() {
     return new UmengIOSPayload();
   }
 
@@ -212,7 +209,7 @@ class UmengPushArgs {
    * Build ios payload body.
    * @returns {UmengIOSPayloadBody}
    */
-  static iOSPayloadBody() {
+  static iosPayloadBody() {
     return new UmengIOSPayloadBody();
   }
 
@@ -288,7 +285,7 @@ class UmengPushPayload {
    * @returns {object|UmengPushPayload}
    */
   extra() {
-    return getOrSetTypeProperty(this, '_extra', arguments[0], 'string');
+    return getOrSetValueProperty(this, '_extra', arguments[0], 'object');
   }
 
   /**
@@ -311,7 +308,7 @@ class UmengAndroidPayload extends UmengPushPayload {
    */
   constructor() {
     super();
-    this._displayType = null;
+    this._displayType = UmengPushArgs.DISPLAY_TYPE_NOTIFICATION;
     this._body = new UmengAndroidPayloadBody();
   }
 
@@ -337,7 +334,7 @@ class UmengAndroidPayload extends UmengPushPayload {
    */
   value() {
     let r = { display_type: this.displayType() };
-    if (typeof this._extra === 'object') r.extra = this.extra();
+    if (this._extra && (typeof this._extra === 'object')) r.extra = this.extra();
     if (this._body instanceof UmengAndroidPayloadBody) r.body = this.body().value();
     return r;
   }
@@ -450,6 +447,14 @@ class UmengAndroidPayloadBody {
   }
 
   /**
+   * Get or set sound.
+   * @returns {string|UmengAndroidPayloadBody}
+   */
+  sound() {
+    return getOrSetValueProperty(this, '_sound', arguments[0], 'string');
+  }
+
+  /**
    * Get or set builder id.
    * @returns {string|UmengAndroidPayloadBody}
    */
@@ -511,9 +516,14 @@ class UmengAndroidPayloadBody {
    */
   custom() {
     let value = arguments[0];
-    return (typeof value === 'object')
-      ? getOrSetValueProperty(this, '_custom', value, 'object')
-      : getOrSetValueProperty(this, '_custom', value, 'string');
+    if (value === undefined) {
+      return this._custom;
+    }
+    if (typeof value === 'object' || typeof value === 'string') {
+      this._custom = value;
+      return this;
+    }
+    throw Error('require value to be string or object');
   }
 
   /**
@@ -536,7 +546,7 @@ class UmengAndroidPayloadBody {
     if (typeof this._afterOpen === 'string') r.after_open = this.afterOpen();
     if (typeof this._url === 'string') r.url = this.url();
     if (typeof this._activity === 'string') r.activity = this.activity();
-    if (typeof this._custom === 'string' || typeof this._custom === 'object') r.custom = this.custom();
+    if (this._custom && ((typeof this._custom === 'string') || (typeof this._custom === 'object'))) r.custom = this.custom();
     return r;
   }
 
@@ -551,7 +561,7 @@ class UmengIOSPayloadBody {
    * @constructor
    */
   constructor() {
-    this._alert = 'alert';
+    this._alert = null;
     this._badge = null;
     this._category = null;
     this._contentAvailable = null;
@@ -594,7 +604,8 @@ class UmengIOSPayloadBody {
    * @returns {object}
    */
   value() {
-    let r = { alert: this._alert };
+    let r = {};
+    if (typeof this._alert === 'string') r.alert = this.alert();
     if (typeof this._badge === 'number') r.badge = this.badge();
     if (typeof this._sound === 'string') r.sound = this.sound();
     if (typeof this._category === 'string') r.category = this.category();
