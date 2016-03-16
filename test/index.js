@@ -2,6 +2,7 @@
 
 describe('umeng-push', function() {
 
-  require('./args-test');
+  require('./test-args');
+  require('./test-push');
 
 });
