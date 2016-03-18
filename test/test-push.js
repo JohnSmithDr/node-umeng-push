@@ -22,7 +22,7 @@ describe('UmengPush', function() {
       let args = UmengPushArgs
         .android()
         .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
-        .alias('foo')
+        .alias('foo,bar')
         .aliasType('test')
         .thirdPartyId('foo-id')
         .payload(
@@ -92,7 +92,7 @@ describe('UmengPush', function() {
 
     });
 
-    it.skip('should be ok to push to ios', function(done) {
+    it('should be ok to push to ios', function(done) {
 
       let args = UmengPushArgs
         .ios()
@@ -106,15 +106,18 @@ describe('UmengPush', function() {
             .body(
               UmengPushArgs
                 .iosPayloadBody()
-                .alert('test alert')
-                .category('test push')
+                .alert('test alert notification')
+                .category('yiqijiao')
                 .contentAvailable('test content')
             )
         )
         .value();
 
+      console.log('push args:', args);
+
       iosClient.send(args, (err, r) => {
         if (err) return done(err);
+        console.log('push result:', r);
         r.ret.should.equal('SUCCESS');
         r.data.should.be.an('object');
         r.data.msg_id.should.be.a('string');
@@ -132,7 +135,7 @@ describe('UmengPush', function() {
       let args = UmengPushArgs
         .android()
         .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
-        .alias('foo')
+        .alias('foo,bar')
         .aliasType('test')
         .thirdPartyId('foo-id')
         .payload(
@@ -200,10 +203,11 @@ describe('UmengPush', function() {
         });
     });
 
-    it.skip('should be ok to push to ios', function() {
+    it('should be ok to push to ios', function() {
 
       let args = UmengPushArgs
         .ios()
+        .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
         .alias('foo')
         .aliasType('test')
         .thirdPartyId('foo-id')
@@ -214,16 +218,19 @@ describe('UmengPush', function() {
             .body(
               UmengPushArgs
                 .iosPayloadBody()
-                .alert('test alert')
+                .alert('test alert notification async')
                 .category('test push')
                 .contentAvailable('test content')
             )
         )
         .value();
 
-      iosClient
+      console.log('push args:', args);
+
+      return iosClient
         .sendAsync(args)
         .then(r => {
+          console.log('push result:', r);
           r.ret.should.equal('SUCCESS');
           r.data.should.be.an('object');
           r.data.msg_id.should.be.a('string');
