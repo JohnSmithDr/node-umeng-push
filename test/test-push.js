@@ -21,6 +21,7 @@ describe('UmengPush', function() {
 
       let args = UmengPushArgs
         .android()
+        .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
         .alias('foo')
         .aliasType('test')
         .thirdPartyId('foo-id')
@@ -31,15 +32,19 @@ describe('UmengPush', function() {
             .body(
               UmengPushArgs
                 .androidPayloadBody()
-                .ticker('test push ticker')
-                .title('test push title')
-                .text('test push text')
+                .ticker('test push android')
+                .title('test push android')
+                .text('test push android notification with umeng-push')
+                .afterOpen(UmengPushArgs.AFTER_OPEN_GO_APP)
             )
         )
         .value();
 
+      console.log('push args:', args);
+
       androidClient.send(args, (err, r) => {
         if (err) return done(err);
+        console.log('push result:', r);
         r.ret.should.equal('SUCCESS');
         r.data.should.be.an('object');
         r.data.msg_id.should.be.a('string');
@@ -53,6 +58,7 @@ describe('UmengPush', function() {
 
       let args = UmengPushArgs
         .android()
+        .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
         .alias('foo')
         .aliasType('test')
         .thirdPartyId('foo-id')
@@ -72,8 +78,11 @@ describe('UmengPush', function() {
         )
         .value();
 
+      console.log('push args:', args);
+
       androidClient.send(args, (err, r) => {
         if (err) return done(err);
+        console.log('push result:', r);
         r.ret.should.equal('SUCCESS');
         r.data.should.be.an('object');
         r.data.msg_id.should.be.a('string');
@@ -83,7 +92,7 @@ describe('UmengPush', function() {
 
     });
 
-    it('should be ok to push to ios', function(done) {
+    it.skip('should be ok to push to ios', function(done) {
 
       let args = UmengPushArgs
         .ios()
@@ -122,6 +131,7 @@ describe('UmengPush', function() {
 
       let args = UmengPushArgs
         .android()
+        .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
         .alias('foo')
         .aliasType('test')
         .thirdPartyId('foo-id')
@@ -132,16 +142,20 @@ describe('UmengPush', function() {
             .body(
               UmengPushArgs
                 .androidPayloadBody()
-                .ticker('test push ticker')
-                .title('test push title')
-                .text('test push text')
+                .ticker('test push android')
+                .title('test push android async')
+                .text('async test push android notification with umeng-push')
+                .afterOpen(UmengPushArgs.AFTER_OPEN_GO_APP)
             )
         )
         .value();
 
-      androidClient
+      console.log('push args:', args);
+
+      return androidClient
         .sendAsync(args)
         .then(r => {
+          console.log('push result:', r);
           r.ret.should.equal('SUCCESS');
           r.data.should.be.an('object');
           r.data.msg_id.should.be.a('string');
@@ -153,6 +167,7 @@ describe('UmengPush', function() {
 
       let args = UmengPushArgs
         .android()
+        .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
         .alias('foo')
         .aliasType('test')
         .thirdPartyId('foo-id')
@@ -172,9 +187,12 @@ describe('UmengPush', function() {
         )
         .value();
 
-      androidClient
+      console.log('push args:', args);
+
+      return androidClient
         .sendAsync(args)
         .then(r => {
+          console.log('push result:', r);
           r.ret.should.equal('SUCCESS');
           r.data.should.be.an('object');
           r.data.msg_id.should.be.a('string');
@@ -182,7 +200,7 @@ describe('UmengPush', function() {
         });
     });
 
-    it('should be ok to push to ios', function() {
+    it.skip('should be ok to push to ios', function() {
 
       let args = UmengPushArgs
         .ios()
