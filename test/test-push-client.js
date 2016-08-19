@@ -1,19 +1,17 @@
 'use strict';
 
-let should = require('chai').should();
-let UmengPush = require('..').UmengPush;
-let UmengPushArgs = require('..').UmengPushArgs;
+const expect = require('chai').expect();
+const UmengPushClient = require('..').UmengPushClient;
+const UmengPushArgs = require('..').UmengPushArgs;
 
-let keys = require('./keys');
-let ANDROID_APP_KEY = keys.ANDROID_APP_KEY,
-    ANDROID_MASTER_KEY = keys.ANDROID_MASTER_KEY,
-    IOS_APP_KEY = keys.IOS_APP_KEY,
-    IOS_MASTER_KEY = keys.IOS_MASTER_KEY;
+// const keys = require('./test-keys');
+const keys = require('./keys');
+const logger = require('./test-logger');
 
-let androidClient = new UmengPush(ANDROID_APP_KEY, ANDROID_MASTER_KEY);
-let iosClient = new UmengPush(IOS_APP_KEY, IOS_MASTER_KEY);
+describe('UmengPushClient', function() {
 
-describe('UmengPush', function() {
+  let androidClient = UmengPushClient.create(keys.ANDROID_APP_KEY, keys.ANDROID_MASTER_KEY);
+  let iosClient = UmengPushClient.create(keys.IOS_APP_KEY, keys.IOS_MASTER_KEY);
 
   describe('#send', function() {
 
@@ -40,11 +38,11 @@ describe('UmengPush', function() {
         )
         .value();
 
-      console.log('push args:', args);
+      logger.debug('push args:', args);
 
       androidClient.send(args, (err, r) => {
         if (err) return done(err);
-        console.log('push result:', r);
+        logger.debug('push result:', r);
         r.ret.should.equal('SUCCESS');
         r.data.should.be.an('object');
         r.data.msg_id.should.be.a('string');
@@ -78,11 +76,11 @@ describe('UmengPush', function() {
         )
         .value();
 
-      console.log('push args:', args);
+      logger.debug('push args:', args);
 
       androidClient.send(args, (err, r) => {
         if (err) return done(err);
-        console.log('push result:', r);
+        logger.debug('push result:', r);
         r.ret.should.equal('SUCCESS');
         r.data.should.be.an('object');
         r.data.msg_id.should.be.a('string');
@@ -113,11 +111,11 @@ describe('UmengPush', function() {
         )
         .value();
 
-      console.log('push args:', args);
+      logger.debug('push args:', args);
 
       iosClient.send(args, (err, r) => {
         if (err) return done(err);
-        console.log('push result:', r);
+        logger.debug('push result:', r);
         r.ret.should.equal('SUCCESS');
         r.data.should.be.an('object');
         r.data.msg_id.should.be.a('string');
@@ -125,10 +123,6 @@ describe('UmengPush', function() {
         done();
       });
     });
-
-  });
-
-  describe('#sendAsync', function() {
 
     it('should be ok to push notification to android', function() {
 
@@ -153,12 +147,12 @@ describe('UmengPush', function() {
         )
         .value();
 
-      console.log('push args:', args);
+      logger.debug('push args:', args);
 
       return androidClient
         .sendAsync(args)
         .then(r => {
-          console.log('push result:', r);
+          logger.debug('push result:', r);
           r.ret.should.equal('SUCCESS');
           r.data.should.be.an('object');
           r.data.msg_id.should.be.a('string');
@@ -190,12 +184,12 @@ describe('UmengPush', function() {
         )
         .value();
 
-      console.log('push args:', args);
+      logger.debug('push args:', args);
 
       return androidClient
         .sendAsync(args)
         .then(r => {
-          console.log('push result:', r);
+          logger.debug('push result:', r);
           r.ret.should.equal('SUCCESS');
           r.data.should.be.an('object');
           r.data.msg_id.should.be.a('string');
@@ -225,12 +219,12 @@ describe('UmengPush', function() {
         )
         .value();
 
-      console.log('push args:', args);
+      logger.debug('push args:', args);
 
       return iosClient
         .sendAsync(args)
         .then(r => {
-          console.log('push result:', r);
+          logger.debug('push result:', r);
           r.ret.should.equal('SUCCESS');
           r.data.should.be.an('object');
           r.data.msg_id.should.be.a('string');
@@ -240,60 +234,44 @@ describe('UmengPush', function() {
 
   });
 
-  describe('#getStatus', function() {
+  describe('#status', function() {
 
-    it('should be ok', function(done) {
+    it('should be ok with callback', function(done) {
+      // TODO
       done();
     });
 
-  });
-
-  describe('#getStatusAsync', function() {
-
-    it('should be ok', function() {
-
+    it('should be ok with promise', function(done) {
+      // TODO
+      done();
     });
 
   });
 
   describe('#cancel', function() {
 
-    it('should be ok', function(done) {
+    it('should be ok with callback', function(done) {
+      // TODO
       done();
     });
 
-  });
-
-  describe('#cancelAsync', function() {
-
-    it('should be ok', function() {
-
+    it('should be ok with promise', function(done) {
+      // TODO
+      done();
     });
 
   });
 
   describe('#upload', function() {
 
-    it('should be ok', function(done) {
+    it('should be ok with callback', function(done) {
+      // TODO
       done();
     });
 
-  });
-
-  describe('#uploadAsync', function() {
-
-    it('should be ok', function() {
-
-    });
-
-  });
-
-  describe('#sign', function() {
-
-    it('should be ok', function() {
-      let client = new UmengPush();
-      let sign = client.sign('foo', 'bar');
-      sign.should.be.a('string').and.match(/^[0-9a-f]{32}$/g);
+    it('should be ok with promise', function(done) {
+      // TODO
+      done();
     });
 
   });
