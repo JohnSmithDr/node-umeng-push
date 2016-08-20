@@ -90,13 +90,14 @@ PushClient.prototype = {
 
   /**
    * Calculate sign.
-   * @param urlStr
-   * @param body
+   * @param {string} urlStr
+   * @param {string} bodyStr
    * @returns {Buffer|any}
+   * @private
    */
-  _sign(urlStr, body) {
+  _sign(urlStr, bodyStr) {
     let method = 'POST';
-    let value = `${method}${urlStr}${body}${this._appMasterSecret}`;
+    let value = `${method}${urlStr}${bodyStr}${this._appMasterSecret}`;
     return crypto.createHash('md5').update(value, 'UTF-8').digest('hex');
   },
 
@@ -109,9 +110,11 @@ PushClient.prototype = {
       })
       .then(result => {
         if (typeof callback === 'function') callback(null, result);
+        else return Promise.resolve(result);
       })
       .catch(err => {
         if (typeof callback === 'function') callback(err);
+        else return Promise.reject(err);
       });
 
     if (typeof callback !== 'function') {

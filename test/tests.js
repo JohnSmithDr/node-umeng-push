@@ -8,6 +8,6 @@ describe('umeng-push', function () {
 
   require('./test-push-args-ios');
 
-  //require('./test-push-client');
+  require('./test-push-client');
 
 });

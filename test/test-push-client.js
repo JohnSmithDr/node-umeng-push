@@ -1,10 +1,9 @@
 'use strict';
 
-const expect = require('chai').expect();
+const expect = require('chai').expect;
 const UmengPushClient = require('..').UmengPushClient;
 const UmengPushArgs = require('..').UmengPushArgs;
 
-// const keys = require('./test-keys');
 const keys = require('./keys');
 const logger = require('./test-logger');
 
@@ -15,7 +14,7 @@ describe('UmengPushClient', function() {
 
   describe('#send', function() {
 
-    it('should be ok to push notification to android', function(done) {
+    it('should push notification to android (callback)', function(done) {
 
       let args = UmengPushArgs
         .android()
@@ -32,7 +31,7 @@ describe('UmengPushClient', function() {
                 .androidPayloadBody()
                 .ticker('test push android')
                 .title('test push android')
-                .text('test push android notification with umeng-push')
+                .text('test push android notification with umeng-push (callback)')
                 .afterOpen(UmengPushArgs.AFTER_OPEN_GO_APP)
             )
         )
@@ -43,16 +42,57 @@ describe('UmengPushClient', function() {
       androidClient.send(args, (err, r) => {
         if (err) return done(err);
         logger.debug('push result:', r);
-        r.ret.should.equal('SUCCESS');
-        r.data.should.be.an('object');
-        r.data.msg_id.should.be.a('string');
-        r.data.thirdparty_id.should.be.a('string').and.equal('foo-id');
-        done();
+        try {
+          expect(r.ret).to.equal('SUCCESS');
+          expect(r.data).to.be.an('object');
+          expect(r.data.msg_id).to.be.a('string');
+          expect(r.data.thirdparty_id).to.equal('foo-id');
+          return done();
+        }
+        catch(err) {
+          return done(err);
+        }
       });
 
     });
 
-    it('should be ok to push message to android', function(done) {
+    it('should push notification to android (promise)', function() {
+
+      let args = UmengPushArgs
+        .android()
+        .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
+        .alias('foo,bar')
+        .aliasType('test')
+        .thirdPartyId('foo-id')
+        .payload(
+          UmengPushArgs
+            .androidPayload()
+            .displayType(UmengPushArgs.DISPLAY_TYPE_NOTIFICATION)
+            .body(
+              UmengPushArgs
+                .androidPayloadBody()
+                .ticker('test push android')
+                .title('test push android')
+                .text('test push android notification with umeng-push (promise)')
+                .afterOpen(UmengPushArgs.AFTER_OPEN_GO_APP)
+            )
+        )
+        .value();
+
+      logger.debug('push args:', args);
+
+      return androidClient.send(args)
+        .then(r => {
+          logger.debug('push result:', r);
+          expect(r.ret).to.equal('SUCCESS');
+          expect(r.data).to.be.an('object');
+          expect(r.data.msg_id).to.be.a('string');
+          expect(r.data.thirdparty_id).to.equal('foo-id');
+        });
+
+    });
+
+    it('should push message to android (callback)', function(done) {
 
       let args = UmengPushArgs
         .android()
@@ -81,16 +121,58 @@ describe('UmengPushClient', function() {
       androidClient.send(args, (err, r) => {
         if (err) return done(err);
         logger.debug('push result:', r);
-        r.ret.should.equal('SUCCESS');
-        r.data.should.be.an('object');
-        r.data.msg_id.should.be.a('string');
-        r.data.thirdparty_id.should.be.a('string').and.equal('foo-id');
-        done();
+        try {
+          expect(r.ret).to.equal('SUCCESS');
+          expect(r.data).to.be.an('object');
+          expect(r.data.msg_id).to.be.a('string');
+          expect(r.data.thirdparty_id).to.equal('foo-id');
+          done();
+        }
+        catch(err) {
+          done(err);
+        }
       });
 
     });
 
-    it('should be ok to push to ios', function(done) {
+    it('should push message to android (promise)', function() {
+
+      let args = UmengPushArgs
+        .android()
+        .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
+        .alias('foo')
+        .aliasType('test')
+        .thirdPartyId('foo-id')
+        .payload(
+          UmengPushArgs
+            .androidPayload()
+            .displayType(UmengPushArgs.DISPLAY_TYPE_MESSAGE)
+            .body(
+              UmengPushArgs
+                .androidPayloadBody()
+                .custom({
+                  foo: 'foo',
+                  bar: 'bar',
+                  custom: 1
+                })
+            )
+        )
+        .value();
+
+      logger.debug('push args:', args);
+
+      return androidClient.send(args)
+        .then(r => {
+          logger.debug('push result:', r);
+          expect(r.ret).to.equal('SUCCESS');
+          expect(r.data).to.be.an('object');
+          expect(r.data.msg_id).to.be.a('string');
+          expect(r.data.thirdparty_id).to.equal('foo-id');
+        });
+
+    });
+
+    it('should push to ios (callback)', function(done) {
 
       let args = UmengPushArgs
         .ios()
@@ -116,92 +198,23 @@ describe('UmengPushClient', function() {
       iosClient.send(args, (err, r) => {
         if (err) return done(err);
         logger.debug('push result:', r);
-        r.ret.should.equal('SUCCESS');
-        r.data.should.be.an('object');
-        r.data.msg_id.should.be.a('string');
-        r.data.thirdparty_id.should.be.a('string').and.equal('foo-id');
-        done();
+        try {
+          r.ret.should.equal('SUCCESS');
+          r.data.should.be.an('object');
+          r.data.msg_id.should.be.a('string');
+          r.data.thirdparty_id.should.be.a('string').and.equal('foo-id');
+          done();
+        }
+        catch(err) {
+          done(err);
+        }
       });
     });
 
-    it('should be ok to push notification to android', function() {
-
-      let args = UmengPushArgs
-        .android()
-        .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
-        .alias('foo,bar')
-        .aliasType('test')
-        .thirdPartyId('foo-id')
-        .payload(
-          UmengPushArgs
-            .androidPayload()
-            .displayType(UmengPushArgs.DISPLAY_TYPE_NOTIFICATION)
-            .body(
-              UmengPushArgs
-                .androidPayloadBody()
-                .ticker('test push android')
-                .title('test push android async')
-                .text('async test push android notification with umeng-push')
-                .afterOpen(UmengPushArgs.AFTER_OPEN_GO_APP)
-            )
-        )
-        .value();
-
-      logger.debug('push args:', args);
-
-      return androidClient
-        .sendAsync(args)
-        .then(r => {
-          logger.debug('push result:', r);
-          r.ret.should.equal('SUCCESS');
-          r.data.should.be.an('object');
-          r.data.msg_id.should.be.a('string');
-          r.data.thirdparty_id.should.be.a('string').and.equal('foo-id');
-        });
-    });
-
-    it('should be ok to push message to android', function() {
-
-      let args = UmengPushArgs
-        .android()
-        .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
-        .alias('foo')
-        .aliasType('test')
-        .thirdPartyId('foo-id')
-        .payload(
-          UmengPushArgs
-            .androidPayload()
-            .displayType(UmengPushArgs.DISPLAY_TYPE_MESSAGE)
-            .body(
-              UmengPushArgs
-                .androidPayloadBody()
-                .custom({
-                  foo: 'foo',
-                  bar: 'bar',
-                  custom: 1
-                })
-            )
-        )
-        .value();
-
-      logger.debug('push args:', args);
-
-      return androidClient
-        .sendAsync(args)
-        .then(r => {
-          logger.debug('push result:', r);
-          r.ret.should.equal('SUCCESS');
-          r.data.should.be.an('object');
-          r.data.msg_id.should.be.a('string');
-          r.data.thirdparty_id.should.be.a('string').and.equal('foo-id');
-        });
-    });
-
-    it('should be ok to push to ios', function() {
+    it('should push to ios (promise)', function() {
 
       let args = UmengPushArgs
         .ios()
-        .type(UmengPushArgs.TYPE_CUSTOMIZEDCAST)
         .alias('foo')
         .aliasType('test')
         .thirdPartyId('foo-id')
@@ -212,8 +225,8 @@ describe('UmengPushClient', function() {
             .body(
               UmengPushArgs
                 .iosPayloadBody()
-                .alert('test alert notification async')
-                .category('test push')
+                .alert('test alert notification')
+                .category('yiqijiao')
                 .contentAvailable('test content')
             )
         )
@@ -221,8 +234,7 @@ describe('UmengPushClient', function() {
 
       logger.debug('push args:', args);
 
-      return iosClient
-        .sendAsync(args)
+      return iosClient.send(args)
         .then(r => {
           logger.debug('push result:', r);
           r.ret.should.equal('SUCCESS');
@@ -230,6 +242,7 @@ describe('UmengPushClient', function() {
           r.data.msg_id.should.be.a('string');
           r.data.thirdparty_id.should.be.a('string').and.equal('foo-id');
         });
+
     });
 
   });
