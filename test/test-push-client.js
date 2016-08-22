@@ -187,7 +187,7 @@ describe('UmengPushClient', function() {
               UmengPushArgs
                 .iosPayloadBody()
                 .alert('test alert notification')
-                .category('yiqijiao')
+                .category('test')
                 .contentAvailable('test content')
             )
         )
@@ -226,7 +226,7 @@ describe('UmengPushClient', function() {
               UmengPushArgs
                 .iosPayloadBody()
                 .alert('test alert notification')
-                .category('yiqijiao')
+                .category('test')
                 .contentAvailable('test content')
             )
         )
